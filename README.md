@@ -1,0 +1,2 @@
+# polling
+voting of candidates
