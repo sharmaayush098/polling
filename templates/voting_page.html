@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>polling details</title></title>
+     <script
+            src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous"></script>
+
+</head>
+<body>
+{% csrf_token %}
+<div align="center">
+    <h3>POLLING</h3>
+    <label for ="number" class="sr-only"> VOTED</label>
+    <div id = "result">
+        {{ vote_obj.voted }}
+    </div>
+    <button type="button" id="yes">YES</button><br>
+    <div id = "no_result">
+        {{ vote_obj.not_voted }}
+    </div>
+    <button type="button" id="no">No</button><br>
+
+</div>
+</body>
+</html>
+<script>
+    var vote_id = "{{ vote_obj.id }}";
+    var vote_ID ="{{ vote_obj.id }}";
+
+    $(document).ready(function () {
+        $("#yes").click(function disAlert() {
+            $("#yes").prop('disabled',true);
+        })
+
+    });
+    $("#yes").click(function () {
+        $.ajax({
+            url:'/polling/'+vote_id+'/',
+            method:'post',
+            success: function (response) {
+                $("#result").html(response.vote_yes);
+
+
+            },
+            error: function(response) {
+                alert("error")
+
+            }
+
+        });
+
+    });
+
+    $("#no").click(function () {
+        $.ajax({
+            url: '/polling_no/' + vote_id + '/',
+            method: 'post',
+            success: function (response) {
+                $("#no_result").html(response.vote_no);
+            },
+            error: function (response) {
+                alert("error")
+
+            }
+
+        })
+    })
+
+</script>
