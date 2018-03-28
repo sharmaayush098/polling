@@ -1,0 +1,29 @@
+{% extends 'base_site.html' %}
+{% block answers %}
+<h1>{{ question.question_text }}</h1>
+{% if error_message %}
+    <p><strong>{{ error_message }}</strong></p>
+{% endif %}
+<form action="{% url 'polls:vote' question.id %}" method="post" id="voting-form">
+    {% csrf_token %}
+<div style="display-inside: ruby-base-container" align="center">
+    {% for options in question.options_set.all %}
+        <input type = "radio" name = "options" value="{{options.id}}" id=options{{ forloop.counter }}">
+        <label for="options{{ forloop.counter }}" > {{ options.option_text }}</label><br/>
+    {% endfor %}
+</div>
+
+
+
+
+    <input id="submit-vote" type = "submit" value="Vote"/>
+
+
+    <ul>
+    {% for options in question.options_set.all %}
+         <h4>Reviewed :{{options.option_text}} </h4> <h1> votes :{{ options.votes }}</h1><br>
+    {% endfor %}
+</ul>
+</form>
+
+{%endblock %}

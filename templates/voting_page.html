@@ -17,6 +17,9 @@
     <div id = "result">
         {{ vote_obj.voted }}
     </div>
+    {% for questions in question.id %}
+     {{ question.question_text }}
+    {% endfor %}
     <button type="button" id="yes">YES</button><br>
     <div id = "no_result">
         {{ vote_obj.not_voted }}

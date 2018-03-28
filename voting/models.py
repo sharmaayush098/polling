@@ -16,3 +16,7 @@ class VoteDetail(models.Model):
     def __str__(self):
         return str(self.votes) + str(self.voted) + str(self.not_voted)
 
+
+
+
+
