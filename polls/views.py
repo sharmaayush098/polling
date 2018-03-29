@@ -20,8 +20,24 @@ def detail(request, question_id):
         question = Question.objects.get(id=question_id)
     except Question.DoesNotExist:
         raise Http404('Question does not exist')
-
-    return render(request, 'details.html', {'question': question})
+    if request.user in question.user_voted.all():
+        is_voted = True
+    else:
+        is_voted = False
+    if request.method == "GET":
+        return render(request, 'details.html', {'question': question, "is_voted": is_voted})
+    if request.method == "POST":
+        try:
+            selected_option = question.options_set.get(id=request.POST['options'])
+        except (KeyError, Options.DoesNotExist):
+            return render(request, 'details.html', {'question': question,
+                                                    'error_message': "You don't select a choice"
+                                                    })
+        if not is_voted:
+            selected_option.votes += 1
+            question.user_voted.add(request.user)
+            selected_option.save()
+        return HttpResponseRedirect(reverse('polls:details', args=(question_id,)))
 
 
 def results(request, question_id):

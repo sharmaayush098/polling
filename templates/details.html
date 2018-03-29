@@ -4,7 +4,7 @@
 {% if error_message %}
     <p><strong>{{ error_message }}</strong></p>
 {% endif %}
-<form action="{% url 'polls:vote' question.id %}" method="post" id="voting-form">
+<form action="{% url 'polls:details' question.id %}" method="post" id="voting-form">
     {% csrf_token %}
 <div style="display-inside: ruby-base-container" align="center">
     {% for options in question.options_set.all %}
@@ -15,9 +15,12 @@
 
 
 
-
+    {% if is_voted %}
+        <h3>You had already Voted </h3>
+        <input id="submit-vote" type = "submit" value="Vote" disabled/>
+    {% else %}
     <input id="submit-vote" type = "submit" value="Vote"/>
-
+    {% endif %}
 
     <ul>
     {% for options in question.options_set.all %}
