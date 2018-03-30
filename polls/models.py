@@ -19,4 +19,4 @@ class Options(models.Model):
     votes = models.IntegerField(default=0)
 
     def __str__(self):
-        return self.option_text
+        return self.option_text + str(self.votes)

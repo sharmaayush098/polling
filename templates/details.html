@@ -1,32 +1,73 @@
 {% extends 'base_site.html' %}
 {% block answers %}
-<h1>{{ question.question_text }}</h1>
-{% if error_message %}
-    <p><strong>{{ error_message }}</strong></p>
-{% endif %}
-<form action="{% url 'polls:details' question.id %}" method="post" id="voting-form">
-    {% csrf_token %}
-<div style="display-inside: ruby-base-container" align="center">
-    {% for options in question.options_set.all %}
-        <input type = "radio" name = "options" value="{{options.id}}" id=options{{ forloop.counter }}">
-        <label for="options{{ forloop.counter }}" > {{ options.option_text }}</label><br/>
-    {% endfor %}
-</div>
-
-
-
-    {% if is_voted %}
-        <h3>You had already Voted </h3>
-        <input id="submit-vote" type = "submit" value="Vote" disabled/>
-    {% else %}
-    <input id="submit-vote" type = "submit" value="Vote"/>
+    <h1>{{ question.question_text }}</h1>
+    {% if error_message %}
+        <p><strong>{{ error_message }}</strong></p>
     {% endif %}
+    <form action="{% url 'polls:details' question.id %}" method="post" id="voting-form">
+    <canvas id="doughnut-chart" width="200" height="50"></canvas>
+        {% csrf_token %}
+        <div style="display-inside: ruby-base-container" align="center">
+            {% for options in question.options_set.all %}
+                <input type = "radio" name = "options" value="{{options.id}}" id=options{{ forloop.counter }}">
+                <label for="options{{ forloop.counter }}" > {{ options.option_text }}</label><br/>
+            {% endfor %}
+        </div>
 
-    <ul>
-    {% for options in question.options_set.all %}
-         <h4>Reviewed :{{options.option_text}} </h4> <h1> votes :{{ options.votes }}</h1><br>
-    {% endfor %}
-</ul>
-</form>
 
+
+        {% if is_voted %}
+            <h3>You had already Voted </h3>
+            <input id="submit-vote" type = "submit" value="Vote" disabled/>
+        {% else %}
+            <input id="submit-vote" type = "submit" value="Vote"/>
+        {% endif %}
+
+        <ul>
+            {% for options in question.options_set.all %}
+                <h4>Reviewed :{{options.option_text}} </h4> <h1> votes :{{ options.votes }}</h1><br>
+            {% endfor %}
+        </ul>
+    </form>
+
+    <canvas id="doughnut-chart" width="200" height="50"></canvas>
+    <script>
+        var question_id ="{{ question.id }}";
+
+
+        $(document).ready(function () {
+            $.ajax({
+                    type: 'post',
+                    url: '/polls/display/' + question_id + '/',
+                    success: function (response) {
+                        console.log(response.default_data);
+                        new Chart(document.getElementById("doughnut-chart"), {
+                            type: 'doughnut',
+                            data: {
+                                labels: response.default_labels,
+                                datasets: [
+                                    {
+                                        label: "Population (millions)",
+                                        backgroundColor: ["#3e95cd","#8e5ea2","#3cba9f","#e8c3b9"],
+                                        data: response.default_data
+                                    }
+                                ]
+                            },
+                            options: {
+                                title: {
+                                    display: true,
+                                    text: 'Predicted Election Polls in 2019'
+                                }
+                            }
+                        });
+
+
+                    }
+                }
+            );
+        });
+
+
+
+    </script>
 {%endblock %}
